@@ -1,119 +1,169 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lucky Draw</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
+@extends('layouts.app')
+
+@section('title', 'Lucky Draw')
+
+@section('content')
+    <div style="
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        width: 100%;
+    ">
+        <!-- Header -->
+        <h1 style="
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 20px;
             text-align: center;
-            margin: 0;
-            padding: 0;
-            background: linear-gradient(to bottom right, #f3f4f6, #dfe4ea);
-            height: 100vh;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        ">Lucky Draw</h1>
+
+        <!-- Rectangle Roller Container -->
+        <div style="
+            position: relative;
+            width: 90%;
+            max-width: 400px;
+            height: 200px;
+            overflow: hidden;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
             display: flex;
             justify-content: center;
             align-items: center;
-            flex-direction: column;
-        }
+        ">
+            <ul id="name-list" style="
+                position: absolute;
+                top: 0;
+                width: 100%;
+                list-style: none;
+                padding: 0;
+                margin: 0;
+                text-align: center;
+                animation: none;
+            ">
+                @foreach ($names as $name)
+                    <li style="
+                        font-size: 1.5rem;
+                        font-weight: bold;
+                        color: #007bff;
+                        margin: 30px 0;
+                    ">
+                        {{ $name }}
+                    </li>
+                @endforeach
+            </ul>
+        </div>
 
-        h1 {
-            font-size: 2.5rem;
-            color: #333;
-            margin-bottom: 20px;
-        }
-
-        #spinner {
-            width: 300px;
-            height: 300px;
-            border-radius: 50%;
-            border: 8px solid #ddd;
-            border-top: 8px solid #007bff;
-            animation: spin 0.1s linear infinite;
-            margin: 20px auto;
-            display: none;
-        }
-
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        .winner {
-            margin-top: 30px;
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #007bff;
-        }
-
-        button {
-            padding: 10px 20px;
+        <!-- Winner Display -->
+        <div id="winner" style="
             margin-top: 20px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 1rem;
-            cursor: pointer;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
-
-        /* Hidden names container */
-        .hidden {
+            font-size: 2rem;
+            font-weight: bold;
+            text-align: center;
+            color: #ffdd57;
             display: none;
-        }
-    </style>
-</head>
-<body>
-    <h1>Lucky Draw</h1>
-    <div id="spinner"></div>
-    <button id="start-button">Start Lucky Draw</button>
-    <div class="winner" id="winner"></div>
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        "></div>
 
-    <!-- Hidden Names List -->
-    <div id="names-container" class="hidden">
-        <!-- Names will be dynamically injected here -->
+        <!-- Start Button -->
+        <div style="margin-top: 30px;">
+            <button id="start-button" style="
+                padding: 15px 30px;
+                font-size: 1.5rem;
+                font-weight: bold;
+                background: #ff5722;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+                transition: all 0.3s ease;
+                width: 90%;
+                max-width: 300px;
+            ">Start Lucky Draw</button>
+        </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Names array passed dynamically from the backend
             const names = @json($names);
-
-            // DOM Elements
-            const spinner = document.getElementById('spinner');
+            const nameList = document.getElementById('name-list');
             const winnerDisplay = document.getElementById('winner');
-            const startButton = document.getElementById('start-button');
+            const button = document.getElementById('start-button');
 
-            // Start Lucky Draw
-            startButton.addEventListener('click', () => {
-                if (names.length === 0) {
-                    winnerDisplay.textContent = 'No participants found!';
-                    return;
-                }
+            let spinning = false;
 
-                // Show spinner and hide other elements during the draw
-                spinner.style.display = 'block';
-                winnerDisplay.textContent = '';
+            button.addEventListener('click', () => {
+                if (spinning) return; // Prevent multiple clicks
+                spinning = true;
 
-                // Simulate 3 seconds of spinning and pick a random winner
+                // Reset
+                winnerDisplay.style.display = 'none';
+                nameList.style.animation = 'spin 1s linear infinite'; // Continuous animation
+
+                // Calculate animation
+                const rollDuration = 3000; // Duration of the rolling process
+                const stopIndex = Math.floor(Math.random() * names.length);
+                const stopPosition = -stopIndex * 60; // Adjust 60px per name
+
                 setTimeout(() => {
-                    spinner.style.display = 'none';
-
-                    const winner = names[Math.floor(Math.random() * names.length)];
-                    winnerDisplay.textContent = `🎉 Congratulations, ${winner}! 🎉`;
-                }, 3000);
+                    // Stop animation
+                    nameList.style.animation = 'none';
+                    nameList.style.transform = `translateY(${stopPosition}px)`;
+                    winnerDisplay.textContent = `🎉 Congratulations, ${names[stopIndex]}! 🎉`;
+                    winnerDisplay.style.display = 'block';
+                    spinning = false;
+                }, rollDuration);
             });
         });
     </script>
-</body>
-</html>
+
+    <style>
+        @keyframes spin {
+            0% {
+                transform: translateY(0);
+            }
+            100% {
+                transform: translateY(-300px);
+            }
+        }
+
+        button:hover {
+            background: #e64a19;
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            button {
+                font-size: 1.2rem;
+            }
+            #winner {
+                font-size: 1.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+            button {
+                font-size: 1rem;
+                padding: 10px 20px;
+            }
+            #winner {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+@endsection
