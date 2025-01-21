@@ -6,88 +6,68 @@
     <title>@yield('title', 'My Application')</title>
     <style>
         body {
+            font-family: 'Arial', sans-serif;
             margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #f3f4f6;
+            padding: 0;
+            background: linear-gradient(to bottom right, #f3f4f6, #dfe4ea);
             color: #333;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+            height: 100%;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         }
 
         header {
             text-align: center;
-            padding: 20px;
-            background: white;
-            width: 100%;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
         }
 
         header h1 {
-            font-size: 2rem;
+            font-size: 2.5rem;
             color: #007bff;
-        }
-
-        main {
-            flex: 1;
-            width: 100%;
-            max-width: 1200px;
-            padding: 20px;
-            box-sizing: border-box;
         }
 
         footer {
             text-align: center;
-            padding: 10px 20px;
-            background: white;
-            width: 100%;
-            font-size: 0.9rem;
-            color: #777;
-            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            color: #888;
         }
 
-        /* Responsive Styles */
-        @media (max-width: 768px) {
-            header h1 {
-                font-size: 1.5rem;
-            }
-
-            main {
-                padding: 15px;
-            }
-
-            footer {
-                font-size: 0.8rem;
-            }
+        .btn-primary {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 15px;
+            font-size: 1rem;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: 0.3s ease;
         }
 
-        @media (max-width: 480px) {
-            header h1 {
-                font-size: 1.2rem;
-            }
-
-            main {
-                padding: 10px;
-            }
-
-            footer {
-                font-size: 0.7rem;
-            }
+        .btn-primary:hover {
+            background: linear-gradient(to right, #2575fc, #6a11cb);
         }
     </style>
     @yield('styles')
 </head>
 <body>
-    <header>
-        <h1>@yield('header', 'Welcome to My App')</h1>
-    </header>
-    <main>
+    <div class="container">
+        <header>
+            <h1>@yield('header')</h1>
+        </header>
+
         @yield('content')
-    </main>
-    <footer>
-        &copy; {{ date('Y') }} My Application. All rights reserved.
-    </footer>
+
+        <footer>
+            &copy; {{ date('Y') }} My Application. All Rights Reserved.
+        </footer>
+    </div>
 </body>
 </html>

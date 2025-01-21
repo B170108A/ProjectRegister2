@@ -2,38 +2,37 @@
 
 @section('title', 'Lucky Draw')
 
-@section('content')
-    <div style="
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        height: 100%;
-        width: 100%;
-    ">
-        <!-- Header -->
-        <h1 style="
-            font-size: 2.5rem;
-            font-weight: bold;
-            margin-bottom: 20px;
-            text-align: center;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-        ">Lucky Draw</h1>
+@section('header', 'Lucky Draw')
 
-        <!-- Rectangle Roller Container -->
+@section('content')
+    <!-- Winner Announcement Outside -->
+    <div style="position: relative; max-width: 600px; margin: 0 auto;">
+        <!-- Winner Left -->
+        <div id="winner-left" style="
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ffdd57;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            display: none;
+            position: absolute;
+            left: -150px; /* Position to the left of the rectangle */
+            top: 50%;
+            transform: translateY(-50%);
+        "></div>
+
+        <!-- Rectangle Roller -->
         <div style="
             position: relative;
-            width: 90%;
+            width: 100%;
             max-width: 400px;
             height: 200px;
             overflow: hidden;
             background: #ffffff;
             border-radius: 10px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            margin: 0 auto;
         ">
+            <!-- Spinning Names -->
             <ul id="name-list" style="
                 position: absolute;
                 top: 0;
@@ -57,41 +56,35 @@
             </ul>
         </div>
 
-        <!-- Winner Display -->
-        <div id="winner" style="
-            margin-top: 20px;
-            font-size: 2rem;
+        <!-- Winner Right -->
+        <div id="winner-right" style="
+            font-size: 1.5rem;
             font-weight: bold;
-            text-align: center;
             color: #ffdd57;
-            display: none;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            display: none;
+            position: absolute;
+            right: -150px; /* Position to the right of the rectangle */
+            top: 50%;
+            transform: translateY(-50%);
         "></div>
+    </div>
 
-        <!-- Start Button -->
-        <div style="margin-top: 30px;">
-            <button id="start-button" style="
-                padding: 15px 30px;
-                font-size: 1.5rem;
-                font-weight: bold;
-                background: #ff5722;
-                color: white;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-                box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
-                transition: all 0.3s ease;
-                width: 90%;
-                max-width: 300px;
-            ">Start Lucky Draw</button>
-        </div>
+    <!-- Start Button Container -->
+    <div style="
+        display: flex;
+        justify-content: center;
+        margin-top: 30px;
+    ">
+        <a href="#" class="btn-primary" id="start-button">Start Lucky Draw</a>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const names = @json($names);
             const nameList = document.getElementById('name-list');
-            const winnerDisplay = document.getElementById('winner');
+            const winnerLeft = document.getElementById('winner-left');
+            const winnerRight = document.getElementById('winner-right');
             const button = document.getElementById('start-button');
 
             let spinning = false;
@@ -101,20 +94,25 @@
                 spinning = true;
 
                 // Reset
-                winnerDisplay.style.display = 'none';
+                winnerLeft.style.display = 'none';
+                winnerRight.style.display = 'none';
                 nameList.style.animation = 'spin 1s linear infinite'; // Continuous animation
 
-                // Calculate animation
                 const rollDuration = 3000; // Duration of the rolling process
                 const stopIndex = Math.floor(Math.random() * names.length);
-                const stopPosition = -stopIndex * 60; // Adjust 60px per name
+                const stopPosition = -stopIndex * 60; // Adjust based on margin
 
                 setTimeout(() => {
-                    // Stop animation
-                    nameList.style.animation = 'none';
-                    nameList.style.transform = `translateY(${stopPosition}px)`;
-                    winnerDisplay.textContent = `🎉 Congratulations, ${names[stopIndex]}! 🎉`;
-                    winnerDisplay.style.display = 'block';
+                    nameList.style.animation = 'none'; // Stop animation
+                    nameList.style.transform = `translateY(${stopPosition}px)`; // Fix final position
+                    const winner = names[stopIndex];
+
+                    // Display winner on both sides
+                    winnerLeft.textContent = `🎉 ${winner}`;
+                    winnerRight.textContent = `${winner} 🎉`;
+                    winnerLeft.style.display = 'block';
+                    winnerRight.style.display = 'block';
+
                     spinning = false;
                 }, rollDuration);
             });
@@ -131,39 +129,26 @@
             }
         }
 
-        button:hover {
+        .btn-primary {
+            display: inline-block;
+            padding: 15px 30px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: #ff5722;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
             background: #e64a19;
-            transform: translateY(-2px);
         }
 
-        button:active {
-            transform: translateY(0);
-        }
-
-        /* Responsive Adjustments */
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 2rem;
-            }
-            button {
-                font-size: 1.2rem;
-            }
-            #winner {
-                font-size: 1.8rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            h1 {
-                font-size: 1.5rem;
-            }
-            button {
-                font-size: 1rem;
-                padding: 10px 20px;
-            }
-            #winner {
-                font-size: 1.5rem;
-            }
+        .btn-primary:active {
+            transform: scale(0.98);
         }
     </style>
 @endsection
