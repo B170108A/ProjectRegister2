@@ -50,7 +50,39 @@ class PublicRegistrationController extends Controller
 
         return redirect()->route('home')->with('success', 'Registration successful! Your lucky draw number is ' . $formattedNumber);
     }
+    // Export attendees as CSV
+    public function export()
+    {
+        $fileName = 'registered_attendees.csv';
 
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=\"$fileName\"",
+        ];
+
+        $callback = function () {
+            $file = fopen('php://output', 'w');
+
+            // Add CSV headers
+            fputcsv($file, ['#', 'Name', 'Email', 'Phone', 'Lucky Draw Number']);
+
+            // Add attendee data
+            $registrations = PublicRegistration::all();
+            foreach ($registrations as $index => $registration) {
+                fputcsv($file, [
+                    $index + 1,                         // Row number
+                    $registration->name,               // Name
+                    $registration->email,              // Email
+                    $registration->phone,              // Phone
+                    $registration->lucky_draw_number,  // Lucky Draw Number
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
     /**
      * Display the specified resource.
      */

@@ -5,6 +5,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PublicRegistrationController;
 use App\Models\PublicRegistration;
 
+// Route for CSV export
+Route::get('/public-registrations/export', [PublicRegistrationController::class, 'export'])->name('public-registrations.export');
+
 // Set the landing page to the registration form
 Route::get('/', [PublicRegistrationController::class, 'create'])->name('home');
 

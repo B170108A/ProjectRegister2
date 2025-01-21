@@ -16,6 +16,21 @@
             color: #333;
             margin-bottom: 20px;
         }
+        .export-btn {
+            display: block;
+            width: 150px;
+            margin: 20px auto;
+            padding: 10px 15px;
+            text-align: center;
+            background-color: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .export-btn:hover {
+            background-color: #218838;
+        }
         table {
             width: 80%;
             margin: 0 auto;
@@ -42,6 +57,7 @@
 </head>
 <body>
     <h1>Registered Attendees</h1>
+    <a href="{{ route('public-registrations.export') }}" class="export-btn">Export to CSV</a>
     <table>
         <thead>
             <tr>
