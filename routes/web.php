@@ -2,10 +2,24 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PublicRegistrationController;
+use App\Models\PublicRegistration;
 
-Route::get('/', function () {
-    return view('welcome');
+// Set the landing page to the registration form
+Route::get('/', [PublicRegistrationController::class, 'create'])->name('home');
+
+// Resource routes for public registrations
+Route::resource('public-registrations', PublicRegistrationController::class);
+
+// Lucky draw route
+Route::get('lucky-draw', function () {
+    $winner = PublicRegistration::inRandomOrder()->first();
+    return view('lucky-draw', compact('winner'));
 });
+
+// Route::get('/', function () {
+//     return view('welcome');
+// });
 
 Route::get('/dashboard', function () {
     return view('dashboard');
