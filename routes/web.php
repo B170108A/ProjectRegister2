@@ -16,8 +16,9 @@ Route::resource('public-registrations', PublicRegistrationController::class);
 
 // Lucky draw route
 Route::get('lucky-draw', function () {
-    $winner = PublicRegistration::inRandomOrder()->first();
-    return view('lucky-draw', compact('winner'));
+    $names = PublicRegistration::pluck('name')->toArray(); // Fetch only names
+    return view('lucky-draw',
+    compact('names'));
 });
 
 // Route::get('/', function () {

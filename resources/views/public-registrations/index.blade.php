@@ -3,82 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registered Attendees</title>
+    <title>Public Registration</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
             margin: 0;
-            padding: 20px;
-            background-color: #f9f9f9;
+            padding: 0;
+            background: linear-gradient(to bottom right, #f3f4f6, #dfe4ea);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
+
+        .container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
         h1 {
-            text-align: center;
-            color: #333;
+            font-size: 24px;
             margin-bottom: 20px;
+            color: #007bff;
         }
-        .export-btn {
-            display: block;
-            width: 150px;
-            margin: 20px auto;
-            padding: 10px 15px;
-            text-align: center;
-            background-color: #28a745;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            font-weight: bold;
-        }
-        .export-btn:hover {
-            background-color: #218838;
-        }
-        table {
-            width: 80%;
-            margin: 0 auto;
-            border-collapse: collapse;
-            background-color: #fff;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-        th, td {
-            padding: 10px 15px;
+
+        .form-group {
+            margin-bottom: 15px;
             text-align: left;
-            border-bottom: 1px solid #ddd;
         }
-        th {
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px 15px;
+            font-size: 16px;
             background-color: #007bff;
             color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
         }
-        tr:hover {
-            background-color: #f1f1f1;
+
+        button:hover {
+            background-color: #0056b3;
         }
-        .center {
-            text-align: center;
+
+        .success-message {
+            color: green;
+            font-size: 16px;
+            margin-bottom: 20px;
         }
     </style>
 </head>
 <body>
-    <h1>Registered Attendees</h1>
-    <a href="{{ route('public-registrations.export') }}" class="export-btn">Export to CSV</a>
-    <table>
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Phone</th>
-                <th>Lucky Draw Number</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($registrations as $index => $registration)
-                <tr>
-                    <td class="center">{{ $index + 1 }}</td>
-                    <td>{{ $registration->name }}</td>
-                    <td>{{ $registration->email }}</td>
-                    <td>{{ $registration->phone }}</td>
-                    <td class="center">{{ $registration->lucky_draw_number }}</td>
-                </tr>
-            @endforeach
-        </tbody>
-    </table>
+    <div class="container">
+        <h1>Register for the Event</h1>
+
+        <!-- Display success message -->
+        @if (session('success'))
+            <div class="success-message">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        <form action="{{ route('public-registrations.store') }}" method="POST">
+            @csrf
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" placeholder="Enter your name" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" placeholder="Enter your email" required>
+            </div>
+            <div class="form-group">
+                <label for="phone">Phone:</label>
+                <input type="text" id="phone" name="phone" placeholder="Enter your phone number" required>
+            </div>
+            <button type="submit">Register</button>
+        </form>
+    </div>
 </body>
 </html>
