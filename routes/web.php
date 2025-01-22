@@ -4,8 +4,32 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PublicRegistrationController;
 use App\Models\PublicRegistration;
+use App\Models\LuckyDrawRecord;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
+Route::get('/lucky-draw-records', function () {
+    $records = LuckyDrawRecord::all();
 
+    return view('lucky-draw-records', compact('records'));
+});
+
+Route::post('/lucky-draw', function () {
+    // Fetch all participant names
+    $participants = PublicRegistration::pluck('name')->toArray();
+
+    // Randomly select a winner
+    $winner = $participants[array_rand($participants)];
+
+    // Record the winner's name and draw time in a log file
+    $logMessage = "Winner: {$winner}, Time: " . now()->toDateTimeString();
+    Log::channel('daily')->info($logMessage);
+
+    return response()->json([
+        'winner' => $winner,
+        'time' => now()->toDateTimeString(),
+    ]);
+});
 
 // Route for CSV export , import
 Route::get('/public-registrations/export', [PublicRegistrationController::class, 'export'])->name('public-registrations.export');
