@@ -12,7 +12,9 @@ class PublicRegistrationController extends Controller
      */
     public function index()
     {
-        $registrations = PublicRegistration::all();
+        // Paginate the results to show 10 records per page
+        $registrations = PublicRegistration::paginate(15);
+
         return view('public-registrations.index', compact('registrations'));
     }
 
