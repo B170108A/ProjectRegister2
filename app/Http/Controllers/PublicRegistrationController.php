@@ -50,6 +50,29 @@ class PublicRegistrationController extends Controller
 
         return redirect()->route('home')->with('success', 'Registration successful! Your lucky draw number is ' . $formattedNumber);
     }
+    // Import CSV
+    public function importCSV(Request $request)
+    {
+        $request->validate([
+            'csv_file' => 'required|file|mimes:csv,txt',
+        ]);
+
+        $file = $request->file('csv_file');
+        $data = array_map('str_getcsv', file($file->getRealPath()));
+
+        $header = $data[0]; // Assuming the first row is a header
+        unset($data[0]); // Remove the header row
+
+        foreach ($data as $row) {
+            PublicRegistration::create([
+                'name' => $row[0],
+                'email' => $row[1],
+                'lucky_draw_number' => $this->generateLuckyDrawNumber(),
+            ]);
+        }
+
+        return redirect()->route('public-registrations.index')->with('success', 'CSV data imported successfully.');
+    }
     // Export attendees as CSV
     public function export()
     {
@@ -82,6 +105,13 @@ class PublicRegistrationController extends Controller
         };
 
         return response()->stream($callback, 200, $headers);
+    }
+
+    // Generate unique lucky draw number
+    private function generateLuckyDrawNumber()
+    {
+        $lastNumber = PublicRegistration::max('id');
+        return str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
     }
     /**
      * Display the specified resource.
