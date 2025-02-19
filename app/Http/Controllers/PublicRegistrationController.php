@@ -115,6 +115,18 @@ class PublicRegistrationController extends Controller
         $lastNumber = PublicRegistration::max('id');
         return str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
     }
+
+    private function generateUniqueLuckyDrawNumber()
+    {
+        // Start at 1 and increment
+        $lastNumber = PublicRegistration::max('lucky_draw_number') ?? 0;
+
+        // Increment and pad with leading zeros
+        $newNumber = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
+
+        return $newNumber;
+    }
+
     /**
      * Display the specified resource.
      */

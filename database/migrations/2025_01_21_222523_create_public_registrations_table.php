@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('phone');
-            $table->string('lucky_draw_number')->unique();
+            $table->string('lucky_draw_number')->unique()->change();
             $table->timestamps();
         });
     }
@@ -25,8 +25,10 @@ return new class extends Migration
     /**
      * Reverse the migrations.
      */
-    public function down(): void
-    {
-        Schema::dropIfExists('public_registrations');
-    }
+    public function down()
+{
+    Schema::table('public_registrations', function (Blueprint $table) {
+        $table->string('lucky_draw_number')->change(); // Remove unique constraint
+    });
+}
 };

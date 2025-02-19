@@ -6,7 +6,7 @@ use App\Models\LuckyDrawRecord;
 use Illuminate\Http\Request;
 
 class LuckyDrawRecordController extends Controller
-{
+{   
     /**
      * Display a listing of the resource.
      */

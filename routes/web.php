@@ -7,28 +7,37 @@ use App\Models\PublicRegistration;
 use App\Models\LuckyDrawRecord;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+Route::post('/lucky-draw', function () {
+    // Fetch all participant names from PublicRegistration table
+    $participants = PublicRegistration::pluck('name')->toArray();
+
+    // Check if there are participants
+    if (empty($participants)) {
+        return response()->json([
+            'error' => 'No participants found in the public registrations.',
+        ], 404);
+    }
+
+    // Randomly select a winner from the participants
+    $winner = $participants[array_rand($participants)];
+
+    // Record the winner's name and draw time in lucky_draw_records table
+    $record = LuckyDrawRecord::create([
+        'name' => $winner,
+        'draw_time' => now(),
+    ]);
+
+    // Return the winner as a response
+    return response()->json([
+        'winner' => $record->name,
+        'time' => $record->draw_time,
+    ]);
+});
 
 Route::get('/lucky-draw-records', function () {
     $records = LuckyDrawRecord::all();
 
     return view('lucky-draw-records', compact('records'));
-});
-
-Route::post('/lucky-draw', function () {
-    // Fetch all participant names
-    $participants = PublicRegistration::pluck('name')->toArray();
-
-    // Randomly select a winner
-    $winner = $participants[array_rand($participants)];
-
-    // Record the winner's name and draw time in a log file
-    $logMessage = "Winner: {$winner}, Time: " . now()->toDateTimeString();
-    Log::channel('daily')->info($logMessage);
-
-    return response()->json([
-        'winner' => $winner,
-        'time' => now()->toDateTimeString(),
-    ]);
 });
 
 // Route for CSV export , import
